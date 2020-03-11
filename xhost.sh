@@ -143,7 +143,7 @@ do
 done
 
 if [ "$rootDir" == "" ]; then
-        rootDir=${domain//./}
+        rootDir=${domain}
 fi
 
 ### if root dir starts with '/', don't use /var/www as default starting point
@@ -472,7 +472,7 @@ apt-get install geoipupdate -y;
 apt-get install apache2 -y;
 apt-get -y install  php7.0 libapache2-mod-php7.0 php7.0-mcrypt php7.0-curl php7.0-gd php7.0-cli php7.0-dev;
 
-wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz;
+wget https://github.com/kiperos/avhcreater/raw/master/GeoLite2-Country-26-12-2019.tgz;
 tar -xvf GeoLite2-Country*;
 mkdir /usr/local/share/GeoIP;
 mv GeoLite2-Country*/GeoLite2-Country.mmdb /usr/local/share/GeoIP;
@@ -508,7 +508,103 @@ fi
 say_done_2
 }
 #############################################################################################################
+install_apache_maxmind_new(){
+clear
+f_banner
 
+echo -e "\e[34m---------------------------------------------------------------------------------------------------------\e[00m"
+   echo -e "\e[93m[+]\e[00m Install apache with maxmind geobase"
+   echo -e "\e[34m---------------------------------------------------------------------------------------------------------\e[00m"
+echo ""
+spinner
+echo ""
+
+
+
+if [ $(/etc/init.d/apache2 status | grep -v grep | grep 'Apache2 is running' | wc -l) > 0 ]
+then
+ echo "Apache server is already installed and running. Exit after 1 sec.."
+ sleep 1
+ exit 0
+else
+update_system
+apt-get install software-properties-common -y;
+add-apt-repository universe -y;
+add-apt-repository ppa:certbot/certbot -y;
+#apt-repository ppa:maxmind/ppa -y;
+apt-get update -y;
+apt-get install libmaxminddb0 libmaxminddb-dev -y;
+apt -y install sudo
+apt -y install git apache2-dev build-essential
+
+#cd /usr/local/src/
+#wget https://github.com/maxmind/libmaxminddb/releases/download/1.4.2/libmaxminddb-1.4.2.tar.gz
+#tar -xzvf libmaxminddb-*.tar.gz
+#cd libmaxminddb-1.4.2
+#./configure
+#make
+#make check
+#sudo make install
+#sudo ldconfig
+
+
+apt-get install apache2 -y;
+apt-get -y install  php7.0 php7.0-mcrypt php7.0-curl php7.0-gd php7.0-cli php7.0-dev;
+
+wget https://github.com/kiperos/avhcreater/raw/master/GeoLite2-Country-26-12-2019.tgz;
+tar -xzvf GeoLite2-Country*;
+mkdir /usr/local/share/maxminddb;
+mv GeoLite2-Country*/GeoLite2-Country.mmdb /usr/local/share/maxminddb;
+fi
+
+cat > /etc/apache2/mods-available/maxminddb.conf <<EOF
+MaxMindDBEnable On
+MaxMindDBFile COUNTRY_DB /usr/local/share/maxminddb/GeoLite2-Country.mmdb
+EOF
+
+
+#add  city base
+#wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz
+#tar -xvf GeoLite2-City*
+#mv GeoLite2-City*/GeoLite2-City.mmdb /usr/local/share/GeoIP
+
+#if grep -xqFe "  GeoIPEnable On" /etc/apache2/mods-available/geoip.conf
+#then
+#sed -i -e 's/GeoIPEnable Off/GeoIPEnable On/g' /etc/apache2/mods-available/geoip.conf;
+#sed -i -e 's/#GeoIPDBFile \/usr\/share\/GeoIP\/GeoIP.dat/GeoIPDBFile \/usr\/share\/GeoIP\/GeoIP.dat/g' /etc/apache2/mods-available/geoip.conf;
+#sed -i -e 's/<\/IfModule>/GeoIPScanProxyHeaders On\n<\/IfModule>/g' /etc/apache2/mods-available/geoip.conf;
+#echo -e '<IfModule mod_geoip.c>\nGeoIPEnable On\nGeoIPDBFile /usr/share/GeoIP/GeoIP.dat Standard\nGeoIPEnableUTF8 On\n</IfModule>' >> /etc/apache2/apache2.conf;
+
+cd /usr/local/src/
+wget https://github.com/maxmind/mod_maxminddb/releases/download/1.2.0/mod_maxminddb-1.2.0.tar.gz
+tar -xzvf mod_maxminddb-*.tar.gz
+cd mod_maxminddb-1.2.0
+./configure
+make install
+cd
+
+a2enmod rewrite;
+a2enmod maxminddb;
+/etc/init.d/apache2 restart;
+service apache2 restart;
+
+#autoupdate geoip base
+#echo "9 10 * * 4  /usr/bin/geoipupdate" >> /var/spool/cron/root;
+#crontab -u root /var/spool/cron/root;
+#service cron reload;
+
+
+
+cd;
+else
+  echo "Apache geoip module is already installed and running. Script will stop after 1 seconds"
+  sleep 1
+ exit 0
+fi
+
+say_done_2
+}
+#############################################################################################################
 delete_alias(){
 clear
 f_banner
@@ -806,7 +902,7 @@ show_list_virtualhosts
 ;;
 
 2)
-install_apache_maxmind
+install_apache_maxmind_new
 new_virtualhost_create
 start_certbot
 ;;
