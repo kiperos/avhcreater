@@ -551,16 +551,9 @@ apt -y install git apache2-dev build-essential
 apt-get install apache2 -y;
 apt-get -y install  php7.0 php7.0-mcrypt php7.0-curl php7.0-gd php7.0-cli php7.0-dev;
 
-wget https://github.com/kiperos/avhcreater/raw/master/GeoLite2-Country-26-12-2019.tgz;
-tar -xzvf GeoLite2-Country*;
-mkdir /usr/local/share/maxminddb;
-mv GeoLite2-Country*/GeoLite2-Country.mmdb /usr/local/share/maxminddb;
 fi
 
-cat > /etc/apache2/mods-available/maxminddb.conf <<EOF
-MaxMindDBEnable On
-MaxMindDBFile COUNTRY_DB /usr/local/share/maxminddb/GeoLite2-Country.mmdb
-EOF
+
 
 
 #add  city base
@@ -569,7 +562,12 @@ EOF
 #mv GeoLite2-City*/GeoLite2-City.mmdb /usr/local/share/GeoIP
 
 if ls /etc/apache2/mods-available | grep -q maxminddb; then
-#sed -i -e 's/GeoIPEnable Off/GeoIPEnable On/g' /etc/apache2/mods-available/geoip.conf;
+
+echo "Apache maxminddb module is already installed. Script will stop after 1 seconds"
+  sleep 1
+
+else
+  #sed -i -e 's/GeoIPEnable Off/GeoIPEnable On/g' /etc/apache2/mods-available/geoip.conf;
 #sed -i -e 's/#GeoIPDBFile \/usr\/share\/GeoIP\/GeoIP.dat/GeoIPDBFile \/usr\/share\/GeoIP\/GeoIP.dat/g' /etc/apache2/mods-available/geoip.conf;
 #sed -i -e 's/<\/IfModule>/GeoIPScanProxyHeaders On\n<\/IfModule>/g' /etc/apache2/mods-available/geoip.conf;
 #echo -e '<IfModule mod_geoip.c>\nGeoIPEnable On\nGeoIPDBFile /usr/share/GeoIP/GeoIP.dat Standard\nGeoIPEnableUTF8 On\n</IfModule>' >> /etc/apache2/apache2.conf;
@@ -593,10 +591,16 @@ service apache2 restart;
 #service cron reload;
 
 cd;
-
-else
-  echo "Apache maxminddb module is already installed. Script will stop after 1 seconds"
-  sleep 1
+cd /tmp/
+wget https://github.com/kiperos/avhcreater/raw/master/GeoLite2-Country-26-12-2019.tgz;
+tar -xzvf GeoLite2-Country*;
+mkdir /usr/local/share/maxminddb;
+mv GeoLite2-Country*/GeoLite2-Country.mmdb /usr/local/share/maxminddb;
+  
+  cat > /etc/apache2/mods-available/maxminddb.conf <<EOF
+MaxMindDBEnable On
+MaxMindDBFile COUNTRY_DB /usr/local/share/maxminddb/GeoLite2-Country.mmdb
+EOF
  exit 0
 fi
 
