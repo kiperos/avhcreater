@@ -521,12 +521,15 @@ echo ""
 
 
 
-if [ $(/etc/init.d/apache2 status | grep -v grep | grep 'Apache2 is running' | wc -l) > 0 ]
+if ! pidof apache2 > /dev/null
 then
- echo "Apache server is already installed and running. Exit after 1 sec.."
- sleep 1
- exit 0
-else
+
+service apache2 restart > /dev/null
+sleep 2
+
+ if ! pidof apache2 > /dev/null
+  then
+
 update_system
 apt-get install software-properties-common -y;
 add-apt-repository universe -y;
@@ -551,6 +554,12 @@ apt -y install git apache2-dev build-essential
 apt-get install apache2 -y;
 apt-get -y install  php7.0 php7.0-mcrypt php7.0-curl php7.0-gd php7.0-cli php7.0-dev;
 
+else
+
+ echo "Apache server is already installed and running. Exit after 1 sec.."
+ sleep 1
+ return 1
+ fi
 fi
 
 
@@ -565,7 +574,7 @@ if ls /etc/apache2/mods-available | grep -q maxminddb; then
 
 echo "Apache maxminddb module is already installed. Script will stop after 1 seconds"
   sleep 1
-
+  return 1
 else
   #sed -i -e 's/GeoIPEnable Off/GeoIPEnable On/g' /etc/apache2/mods-available/geoip.conf;
 #sed -i -e 's/#GeoIPDBFile \/usr\/share\/GeoIP\/GeoIP.dat/GeoIPDBFile \/usr\/share\/GeoIP\/GeoIP.dat/g' /etc/apache2/mods-available/geoip.conf;
