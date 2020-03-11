@@ -568,7 +568,7 @@ EOF
 #tar -xvf GeoLite2-City*
 #mv GeoLite2-City*/GeoLite2-City.mmdb /usr/local/share/GeoIP
 
- ls /etc/apache2/mods-available | grep -q maxminddb; then
+if ls /etc/apache2/mods-available | grep -q maxminddb; then
 #sed -i -e 's/GeoIPEnable Off/GeoIPEnable On/g' /etc/apache2/mods-available/geoip.conf;
 #sed -i -e 's/#GeoIPDBFile \/usr\/share\/GeoIP\/GeoIP.dat/GeoIPDBFile \/usr\/share\/GeoIP\/GeoIP.dat/g' /etc/apache2/mods-available/geoip.conf;
 #sed -i -e 's/<\/IfModule>/GeoIPScanProxyHeaders On\n<\/IfModule>/g' /etc/apache2/mods-available/geoip.conf;
