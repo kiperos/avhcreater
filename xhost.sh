@@ -2,7 +2,7 @@
 #
 # Vhost-creator-for-apache v 1.0.2
 #
-# Install: cd /usr/local/bin && wget -O xhost https://raw.githubusercontent.com/kiperos/avhcreater/master/xhost.sh && chmod +x xhost
+# Install: cd /usr/local/bin && wget -O xhost https://raw.githubusercontent.com/kiperos/avhcreater/master/xhost.sh && chmod +x xhost && cd && xhost
 #
 # Usage: xhost
 #
