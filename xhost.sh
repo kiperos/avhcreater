@@ -168,7 +168,7 @@ if [ "$action" == 'create' ]
                         ### give permission to root dir
                         chmod 755 $rootDir
                         ### write test file in the new domain dir
-                        if ! echo "Options -Indexes" > $rootDir/.htaccess
+                        if ! echo -e "RewriteEngine on\nOptions -Indexes" > $rootDir/.htaccess
                         then
                                 echo $"ERROR: Not able to write in file $rootDir/.htaccess. Please check permissions"
                                 exit;
