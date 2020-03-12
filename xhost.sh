@@ -101,7 +101,44 @@ apt-get update -y;
 apt-get upgrade -y;
 apt-get install linux-headers-$(uname -r) -y;
 }
+#############################################################################################################
+install_certbot(){
 
+if cat /etc/debian_version | grep -q 7
+then
+echo "You use Debian 7"
+
+wget https://dl.eff.org/certbot-auto
+mv certbot-auto /usr/local/bin/certbot
+chown root /usr/local/bin/certbot
+chmod 0755 /usr/local/bin/certbot
+echo "0 0,12 * * * root python -c 'import random; import time; time.sleep(random.random() * 3600)' && /usr/local/bin/certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
+else
+if cat /etc/debian_version | grep -q 8
+then
+echo "You use debian 8"
+wget https://dl.eff.org/certbot-auto
+mv certbot-auto /usr/local/bin/certbot
+chown root /usr/local/bin/certbot
+chmod 0755 /usr/local/bin/certbot
+echo "0 0,12 * * * root python -c 'import random; import time; time.sleep(random.random() * 3600)' && /usr/local/bin/certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
+else
+if cat /etc/debian_version | grep -q 9
+then
+echo "You use Debian 9"
+apt-get install certbot python-certbot-apache
+else
+if cat /etc/debian_version | grep -q 10
+then
+echo "You use Debian 10"
+apt-get install certbot python-certbot-apache
+else
+echo "You use unsupported debian version"
+fi
+fi
+fi
+fi
+}
 
 #############################################################################################################
 new_virtualhost(){
@@ -435,8 +472,6 @@ echo -e "\e[34m-----------------------------------------------------------------
 echo ""
 spinner
 echo ""
-
-apt-get install certbot python-certbot-apache -y;
 certbot --apache --register-unsafely-without-email;
 
 }
@@ -533,7 +568,7 @@ sleep 2
 update_system
 apt-get install software-properties-common -y;
 #add-apt-repository universe -y;
-add-apt-repository ppa:certbot/certbot -y;
+#add-apt-repository ppa:certbot/certbot -y;
 #apt-repository ppa:maxmind/ppa -y;
 apt-get update -y;
 apt-get install libmaxminddb0 libmaxminddb-dev -y;
@@ -623,7 +658,7 @@ echo "Maxmind module successfully installed"
  return 1
 fi
 
-
+install_certbot
 
 say_done_2
 }
