@@ -572,7 +572,9 @@ fi
 
 if ls /etc/apache2/mods-available | grep -q maxminddb; then
 
-echo "Apache maxminddb module is already installed. Script will stop after 1 seconds"
+echo "Apache maxminddb module is already installed. Trying to start module. Script will stop after 1 seconds"
+a2enmod maxminddb
+systemctl restart apache2
   sleep 1
   return 1
 else
@@ -604,9 +606,9 @@ cd /tmp/
 wget https://github.com/kiperos/avhcreater/raw/master/GeoLite2-Country-26-12-2019.tgz;
 tar -xzvf GeoLite2-Country*;
 mkdir /usr/local/share/maxminddb;
-mv GeoLite2-Country*/GeoLite2-Country.mmdb /usr/local/share/maxminddb;
+mv GeoLite2-Country.mmdb /usr/local/share/maxminddb;
   
-  cat > /etc/apache2/mods-available/maxminddb.conf <<EOF
+cat > /etc/apache2/mods-available/maxminddb.conf <<EOF
 MaxMindDBEnable On
 MaxMindDBFile COUNTRY_DB /usr/local/share/maxminddb/GeoLite2-Country.mmdb
 EOF
