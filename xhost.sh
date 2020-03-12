@@ -211,6 +211,7 @@ if [ "$action" == 'create' ]
                                 exit;
                         else
                                 echo $"Added content to $rootDir/.htaccess"
+				echo -e "Hello World" > $rootDir/index.html
                         fi
                 fi
 
