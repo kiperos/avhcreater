@@ -532,7 +532,7 @@ sleep 2
 
 update_system
 apt-get install software-properties-common -y;
-add-apt-repository universe -y;
+#add-apt-repository universe -y;
 add-apt-repository ppa:certbot/certbot -y;
 #apt-repository ppa:maxmind/ppa -y;
 apt-get update -y;
@@ -584,11 +584,12 @@ else
 #echo -e '<IfModule mod_geoip.c>\nGeoIPEnable On\nGeoIPDBFile /usr/share/GeoIP/GeoIP.dat Standard\nGeoIPEnableUTF8 On\n</IfModule>' >> /etc/apache2/apache2.conf;
 
 cd /usr/local/src/
-wget https://github.com/maxmind/mod_maxminddb/releases/download/1.2.0/mod_maxminddb-1.2.0.tar.gz
+wget https://github.com/maxmind/mod_maxminddb/releases/download/1.2.0/mod_maxminddb-1.2.0.tar.gz;
 tar -xzvf mod_maxminddb-*.tar.gz
 cd mod_maxminddb-1.2.0
 ./configure
 make install
+rm mod_maxminddb-1.2.0.tar.gz*
 cd
 
 a2enmod rewrite;
@@ -605,6 +606,7 @@ cd;
 cd /tmp/
 wget https://github.com/kiperos/avhcreater/raw/master/GeoLite2-Country-26-12-2019.tgz;
 tar -xzvf GeoLite2-Country*;
+rm GeoLite2-Country-26-12-2019.tgz*;
 mkdir /usr/local/share/maxminddb;
 mv GeoLite2-Country.mmdb /usr/local/share/maxminddb;
   
