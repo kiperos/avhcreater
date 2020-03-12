@@ -592,11 +592,6 @@ make install
 rm mod_maxminddb-1.2.0.tar.gz*
 cd
 
-a2enmod rewrite;
-a2enmod maxminddb;
-/etc/init.d/apache2 restart;
-service apache2 restart;
-
 #autoupdate geoip base
 #echo "9 10 * * 4  /usr/bin/geoipupdate" >> /var/spool/cron/root;
 #crontab -u root /var/spool/cron/root;
@@ -614,8 +609,18 @@ cat > /etc/apache2/mods-available/maxminddb.conf <<EOF
 MaxMindDBEnable On
 MaxMindDBFile COUNTRY_DB /usr/local/share/maxminddb/GeoLite2-Country.mmdb
 EOF
- exit 0
+
+a2enmod rewrite;
+a2enmod maxminddb;
+/etc/init.d/apache2 restart;
+systemctl restart apache2
+service apache2 restart;
+
+echo "Maxmind module successfully installed"
+ return 1
 fi
+
+
 
 say_done_2
 }
