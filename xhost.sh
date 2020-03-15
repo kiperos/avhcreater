@@ -126,12 +126,12 @@ else
 if cat /etc/debian_version | grep -q 9
 then
 echo "You use Debian 9"
-apt-get install certbot python-certbot-apache
+apt-get -y install certbot python-certbot-apache
 else
 if cat /etc/debian_version | grep -q 10
 then
 echo "You use Debian 10"
-apt-get install certbot python-certbot-apache
+apt-get -y install certbot python-certbot-apache
 else
 echo "You use unsupported debian version"
 fi
@@ -638,7 +638,8 @@ cd /tmp/
 #wget https://github.com/kiperos/avhcreater/raw/master/GeoLite2-Country-26-12-2019.tgz;
 #rm GeoLite2-Country-26-12-2019.tgz*;
 wget https://github.com/kiperos/avhcreater/raw/master/GeoLite2-Country.mmdb.gz;
-tar -xzvf GeoLite2-Country*;
+#tar -xzvf GeoLite2-Country*;
+gunzip GeoLite2-Country*;
 rm GeoLite2-Country.mmdb.gz;
 mkdir -p /usr/local/share/maxminddb;
 mv GeoLite2-Country.mmdb /usr/local/share/maxminddb;
@@ -646,7 +647,6 @@ mv GeoLite2-Country.mmdb /usr/local/share/maxminddb;
 cat > /etc/apache2/mods-available/maxminddb.conf <<EOF
 MaxMindDBEnable On
 MaxMindDBFile COUNTRY_DB /usr/local/share/maxminddb/GeoLite2-Country.mmdb
-
 EOF
 
 a2enmod rewrite;
