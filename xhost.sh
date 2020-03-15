@@ -104,6 +104,11 @@ apt-get install linux-headers-$(uname -r) -y;
 #############################################################################################################
 install_certbot(){
 
+# check if certbot installed
+dpkg --status certbot | grep -q not-installed
+
+if [ $? -eq 0 ]; then
+    
 if cat /etc/debian_version | grep -q 7
 then
 echo "You use Debian 7"
@@ -137,7 +142,12 @@ echo "You use unsupported debian version"
 fi
 fi
 fi
+fi    
+    
+        else
+echo -e "certbot - ${RED}OK${NC}"
 fi
+
 }
 
 #############################################################################################################
@@ -466,6 +476,7 @@ start_certbot(){
 clear
 f_banner
 
+install_certbot
 
 echo -e "\e[34m---------------------------------------------------------------------------------------------------------\e[00m"
    echo -e "\e[93m[+]\e[00m Starting Certbot"
@@ -658,8 +669,6 @@ service apache2 restart;
 echo "Maxmind module successfully installed"
  return 1
 fi
-
-install_certbot
 
 say_done_2
 }
