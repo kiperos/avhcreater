@@ -104,29 +104,35 @@ apt-get install linux-headers-$(uname -r) -y;
 #############################################################################################################
 install_certbot(){
 
-# check if certbot installed
-dpkg --status certbot | grep -q not-installed
 
-if [ $? -eq 0 ]; then
     
 if cat /etc/debian_version | grep -q 7
 then
 echo "You use Debian 7"
-
+CERTBOT=/usr/local/bin/certbot
+if [ -f CERTBOT ]; then
+echo "certbot is installed"
+else
 wget https://dl.eff.org/certbot-auto
 mv certbot-auto /usr/local/bin/certbot
 chown root /usr/local/bin/certbot
 chmod 0755 /usr/local/bin/certbot
 echo "0 0,12 * * * root python -c 'import random; import time; time.sleep(random.random() * 3600)' && /usr/local/bin/certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
+fi
 else
 if cat /etc/debian_version | grep -q 8
 then
 echo "You use debian 8"
+CERTBOT=/usr/local/bin/certbot
+if [ -f CERTBOT ]; then
+echo "certbot is installed"
+else
 wget https://dl.eff.org/certbot-auto
 mv certbot-auto /usr/local/bin/certbot
 chown root /usr/local/bin/certbot
 chmod 0755 /usr/local/bin/certbot
 echo "0 0,12 * * * root python -c 'import random; import time; time.sleep(random.random() * 3600)' && /usr/local/bin/certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
+fi
 else
 if cat /etc/debian_version | grep -q 9
 then
@@ -142,10 +148,6 @@ echo "You use unsupported debian version"
 fi
 fi
 fi
-fi    
-    
-        else
-echo -e "certbot - ${RED}OK${NC}"
 fi
 
 }
